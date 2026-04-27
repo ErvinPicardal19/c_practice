@@ -1,7 +1,10 @@
 
 TARGET:=main
+PLATFORM=3
 
 C_SOURCES:= $(wildcard *.c)
+C_SOURCES+= $(wildcard FSM/*.c)
+C_SOURCES+= $(wildcard sensor/*.c)
 
 OBJECTS:=$(C_SOURCES:%.c=%.o)
 DEPENDS:=$(OBJECTS:%.o=%.d)

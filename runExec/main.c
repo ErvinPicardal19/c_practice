@@ -14,9 +14,10 @@
  *
  * Return:  Return 0 if success, (-errno) if fail.
  */
-int runExec(const char *cmd, char *output, size_t len)
+int runExec(const char *cmd, char *output, ssize_t len)
 {
-    int err = 0, pid = -1, n;
+    int err = 0, pid = -1;
+    ssize_t n = 0;
     int fds[2]; // 0=read, 1=write
     struct pollfd pfd = {0};
 
@@ -114,7 +115,7 @@ out:
                 return (-err);
             }
 
-            output[n] = '\0';
+            output[(n > len) ? len : n] = '\0';
         }
 
         wait(NULL);
@@ -128,7 +129,7 @@ int main(int __unused argc, char __unused *argv[])
     const size_t len = 2048;
     char *output = (char *)malloc(sizeof(char) * len);
     //char *argv[] = {"ls", "-l", NULL}
-    runExec("touch /home/ervinpicardal/house.txt", output, len-1);
+    runExec("ls .", output, len-1);
     printf("%s\n", output);
 
     free(output);
