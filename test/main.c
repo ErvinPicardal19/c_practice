@@ -2,43 +2,42 @@
 #include <stdint.h>
 
 #define offsetof(type, member) ((size_t)&(((type *)0)->member))
+#define container_of(ptr, t, m) (t *)(((uint8_t *)ptr) - offsetof(t, m))
 
-struct head
+#define list_for_each_entry()
+
+struct list
 {
-	struct head *next, *prev;
+	struct list *next, *prev;
 };
 
 struct foo
 {
 	char firstName[24];
 	char lastName[24];
-	struct head h;
+	struct list head;
 };
 
-struct head lists = { &lists, &lists };
+struct list foos = { &lists, &lists };
 
-void addToList(struct head *h, struct head *n)
+void addToList(struct list *head, struct list *new)
 {
-	n->next = h->next;
-	n->prev = h;
-	h->next->prev = n;
-	h->next = n;
+	new->next = head->next;
+	new->prev = head;
+	head->next->prev = new;
+	head->next = new;
 }
 
 int main(void)
 {
-	struct head *temp = NULL;
+	struct list *temp = NULL;
 	struct foo *ptr = NULL;
-	struct foo newFoo = {"Ervin", "Picardal", {&newFoo.h, &newFoo.h}};
+	struct foo newFoo = {"Ervin", "Picardal", {&newFoo.head, &newFoo.head}};
 
-	addToList(&lists, &newFoo.h);
+	addToList(&foos, &newFoo.head);
 
-	printf("Offset: %lu\n", offsetof(struct foo, h));
-	printf("lists.next: %p\n", lists.next);
-	printf("newFoo.h: %p\n", &newFoo.h);
-	ptr = (struct foo *)(((uint8_t *)lists.next) - offsetof(struct foo, h));
+	//ptr = container_of(foos.next, struct foo, head);
 
-	printf("newFoo: %s\n", ptr->firstName);
 
 
 	return 0;
